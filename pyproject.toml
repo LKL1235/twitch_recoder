@@ -1,0 +1,42 @@
+[project]
+name = "twitch_recoder"
+dynamic = ["version"]
+requires-python = ">=3.10"
+readme = "README.md"
+dependencies = [
+    "requests>=2.31.0",
+    "loguru>=0.7.0",
+    "click>=8.1.0"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.dynamic]
+version = {file = ["version.txt"]}
+
+[project.scripts]
+twitch-recoder = "twitch_recoder.cli:entry_point"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+line-length = 120
+target-version = ['py311', 'py312', 'py313']
+skip-string-normalization = true
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''

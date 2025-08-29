@@ -95,23 +95,20 @@ AUTHED_HEADERS = {
 DEFAULT_CONFIG = {
     "uids": [],
     "data_path": "data",
-    "shutdown_timeout": 10,
     "max_time_limit": 3600,
     "proxy": "",
 }
 
 class Config:
-    def __init__(self, uids: str, data_path: str, shutdown_timeout: int, max_time_limit: int, proxy: str = ""):
+    def __init__(self, uids: str, data_path: str, max_time_limit: int, proxy: str = ""):
         self.uids = uids
         self.data_path = data_path
-        self.shutdown_timeout = shutdown_timeout
         self.max_time_limit = max_time_limit
         self.proxy = proxy
 
-    def reload(self, uids: str, data_path: str, shutdown_timeout: int, max_time_limit: int, proxy: str = ""):
+    def reload(self, uids: str, data_path: str, max_time_limit: int, proxy: str = ""):
         self.uids = uids
         self.data_path = data_path
-        self.shutdown_timeout = shutdown_timeout
         self.max_time_limit = max_time_limit
         self.proxy = proxy
 

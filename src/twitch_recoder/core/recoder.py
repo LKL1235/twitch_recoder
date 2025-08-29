@@ -22,11 +22,6 @@ def recode(url: str, proxy: str = "", save_file_path: str = "", nick_name: str =
             "KHTML, like Gecko) SamsungBrowser/14.2 Chrome/87.0.4280.141 Mobile "
             "Safari/537.36"
         )
-        rw_timeout = "15000000"
-        analyzeduration = "20000000"
-        probesize = "10000000"
-        bufsize = "8000k"
-        max_muxing_queue_size = "1024"
 
         rw_timeout = "50000000"
         analyzeduration = "40000000"
@@ -46,12 +41,16 @@ def recode(url: str, proxy: str = "", save_file_path: str = "", nick_name: str =
             "-thread_queue_size", "1024",
             "-analyzeduration", analyzeduration,
             "-probesize", probesize,
-            "-fflags", "+discardcorrupt",
+            "-fflags", "+discardcorrupt+genpts", # 添加genpts处理时间戳问题
             "-re", "-i", url,
+            "-timeout", "10000000",              # 10秒连接超时
             "-bufsize", bufsize,
             "-sn", "-dn",
-            "-reconnect_delay_max", "60",
+            "-reconnect_delay_max", "15",      # 最大重连延迟减少到15秒
             "-reconnect_streamed", "-reconnect_at_eof",
+            "-reconnect", "1",                  # 启用自动重连
+            "-reconnect_on_network_error", "1", # 网络错误时重连
+            "-reconnect_on_http_error", "1",    # HTTP错误时重连
             "-max_muxing_queue_size", max_muxing_queue_size,
             "-correct_ts_overflow", "1",
             "-avoid_negative_ts", "1",
@@ -60,7 +59,7 @@ def recode(url: str, proxy: str = "", save_file_path: str = "", nick_name: str =
             "-c:a", "copy",
         ]
         if proxy:
-            ffmpeg_command.extend(["-proxy_auth", proxy])
+            ffmpeg_command.extend(["-http_proxy", proxy])
 
         if max_time_limit and max_time_limit >= 0:
             ffmpeg_command.extend(["-t", str(max_time_limit)])
@@ -138,5 +137,5 @@ def recode(url: str, proxy: str = "", save_file_path: str = "", nick_name: str =
                 time.sleep(1)
                 if process.poll() is None:
                     process.kill()
-            except:
+            except Exception:
                 pass

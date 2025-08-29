@@ -4,6 +4,19 @@ Twitch录制器工具模块
 
 import re
 
+from twitch_recoder.config.my_config import config
+
+def get_proxies() -> dict | None:
+    """获取代理配置
+
+    Returns:
+        dict | None: 代理配置字典,如果没有配置代理则返回None
+    """
+    if config.proxy and config.proxy.strip():
+        proxy_url = config.proxy.strip()
+        return {'http': proxy_url, 'https': proxy_url}
+    return None
+
 
 def extract_resolution_width(resolution_str: str) -> int:
     """

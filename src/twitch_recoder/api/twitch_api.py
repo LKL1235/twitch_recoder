@@ -9,6 +9,7 @@ from twitch_recoder.config.my_config import (
 )
 from twitch_recoder.common.m3u8_parser import parse_m3u8_url
 from twitch_recoder.common.stream_sorter import get_best_stream
+from twitch_recoder.common.utils import get_proxies
 from twitch_recoder.types.errors import NetWorkErr, OfflineErr
 from twitch_recoder.types.typeinfo import StreamInfo
 
@@ -38,7 +39,8 @@ def get_token_and_sign(uid: str):
 
     try:
         logger.debug(f"正在获取 {uid} 的访问令牌...")
-        response = requests.post(url, headers=headers, json=data, timeout=10)
+        proxies = get_proxies()
+        response = requests.post(url, headers=headers, json=data, timeout=10, proxies=proxies)
 
         if response.status_code == 200:
             response_data = response.json()
@@ -84,8 +86,11 @@ def get_m3u8_url(uid: str, token: str, sign: str):
         "token": token,
     }
 
-    response = requests.get(url, headers=headers, params=params, timeout=10)
-    logger.debug(f"uid:{uid}, url:{url}, status_code: {response.status_code}, headers: {response.request.headers}, params: {response.request.body}")
+    proxies = get_proxies()
+    response = requests.get(url, headers=headers, params=params, timeout=10, proxies=proxies)
+    logger.debug(
+        f"uid:{uid}, url:{url}, status_code: {response.status_code}, headers: {response.request.headers}, params: {response.request.body}"
+    )
     result = response.text
     return result
 
@@ -107,14 +112,15 @@ def get_room_info(uid: str, token: str):
         },
     ]
 
-    response = requests.post(url, headers=headers, json=data, timeout=10)
+    proxies = get_proxies()
+    response = requests.post(url, headers=headers, json=data, timeout=10, proxies=proxies)
     if response.status_code != 200:
         logger.error(f"获取uid:{uid}, url:{url}房间信息失败: {response.status_code}")
         logger.debug(f"response: {response.text}")
         logger.debug(f"headers: {response.request.headers}")
         logger.debug(f"data: {response.request.body}")
         return None, False
-    
+
     json_data = response.json()
     user_data = json_data[0]['data']['userOrError']
     login_name = str(user_data["login"]) if user_data["login"] else ""

@@ -65,7 +65,7 @@ def main(config_path: str, verbose: bool, quiet: bool, data_path: str = "data"):
         logger.info("启动所有任务...")
         while True:
             process()
-            time.sleep(60)
+            time.sleep(10)
 
     except KeyboardInterrupt:
         logger.info("程序被用户中断")
